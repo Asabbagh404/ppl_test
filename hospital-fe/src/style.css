@@ -28,3 +28,25 @@ body {
 #app {
   width: 100%;
 }
+
+.drugCard,
+.patientCard {
+  width: 100px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+  border: 1px solid black;
+  border-radius: 5px;
+  color: black;
+}
+
+.drugCard {
+  background-color: #ff5e5e;
+}
+
+.patientCard {
+  background-color: #586eff;
+  width: 150px;
+}
