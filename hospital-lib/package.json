@@ -1,6 +1,10 @@
 {
   "name": "hospital-lib",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=16.0.0",
+    "yarn": ">=1.22.0"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
