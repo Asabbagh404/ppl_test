@@ -4,30 +4,21 @@
       <label for="autofetch">Auto fetch</label>
       <Checkbox v-model="autoFetch" label="Auto fetch" :binary="true" inputId="autofetch" />
     </div>
-    <PatientAndDrugs :patients="patients" :drugs="drugs" @updateDrugs="setDrugs" @updatePatients="setPatientsState" />
+    <PatientAndDrugs :patients="patients" v-model:drugs="drugs" />
     <div class="flex flex-wrap gap-5">
       <Button label="Get patient and drugs" @click="getPatientsAndDrugs" />
       <Button label="Simulate" @click="simulate" class="!bg-blue-primary !border-none" />
     </div>
     <hr />
-    <Simulation v-if="simulation" :simulation="simulation" @showHistoryModal="() => showHistoryModal = true" />
-    <Modal v-model:visible="showHistoryModal" header="Simulation History" @hide="!showHistoryModal"
-      @close="showHistoryModal = false">
-      <div class="w-[300px]">
-        <SimulationHistory :simulationHistory="simulationHistory" />
-      </div>
-    </Modal>
+    <SimulationHistory :simulationHistory="simulationHistory" />
   </main>
 </template>
 <script setup lang="ts">
-import { Quarantine } from 'hospital-lib'
+import { Quarantine, PatientsRegister } from 'hospital-lib'
 import Button from 'primevue/button'
-import Modal from 'primevue/dialog'
 import { useApi } from './useApi'
 import { onUnmounted, ref, watch } from 'vue'
-import { PatientsRegister } from 'hospital-lib'
 import SimulationHistory from './components/SimulationHistory.vue'
-import Simulation from './components/Simulation.vue'
 import PatientAndDrugs from './components/PatientAndDrugs.vue'
 import Checkbox from 'primevue/checkbox'
 
@@ -43,7 +34,6 @@ const patients = ref({})
 const drugs = ref<string[]>([])
 const simulation = ref<PatientsRegister>()
 const simulationHistory = ref<{ output: PatientsRegister, input: { drugs: string[], patients: PatientsRegister } }[]>([])
-const showHistoryModal = ref(false)
 const autoFetch = ref(false)
 
 const api = useApi()
@@ -80,7 +70,7 @@ const simulate = () => {
   quarantine.setDrugs(drugs.value)
   simulation.value = quarantine.wait40Days().report()
   simulationHistory.value.push({
-    input: { drugs: drugs.value, patients: patients.value },
+    input: { drugs: drugs.value, patients: { ...patients.value } },
     output: simulation.value,
   })
   // max 10 simulations
@@ -90,9 +80,6 @@ const simulate = () => {
 }
 const setDrugs = (newDrugs: string[]) => {
   drugs.value = newDrugs
-}
-const setPatientsState = (newPatients: Record<string, number>) => {
-  patients.value = newPatients
 }
 </script>
 

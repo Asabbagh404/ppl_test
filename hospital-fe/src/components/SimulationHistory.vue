@@ -1,36 +1,34 @@
 <template>
-  <div class="w-[300px]">
-    <ul class="flex flex-col justify-center items-center">
-      <li v-for="(simulation, index) in props.simulationHistory" :key="index" class="my-4">
-        <h3 class="text-center text-blue-primary">Simulation {{ index + 1 }}</h3>
-        <ul class="flex items-center gap-3">
-          <span class="text-blue-primary">input:</span>
-          <li v-for="[k, patient] in Object.entries(simulation.input.patients)" :key="k">
-            {{ k }}: {{ patient }}
-          </li>
-        </ul>
-        <ul class="flex items-center gap-3" v-if="simulation.input.drugs.length > 0">
-          <span class="text-blue-primary">drug:</span>
-          <li v-for="drug in simulation.input.drugs" :key="drug">
-            {{ drugsSymbolMapper[drug as keyof typeof drugsSymbolMapper] }}
-          </li>
-        </ul>
-        <ul class="flex items-center gap-3">
-          <span class="text-blue-primary">output:</span>
-          <li v-for="[k, patient] in Object.entries(simulation.output)" :key="k">
-            {{ k }}: {{ patient }}
-          </li>
-        </ul>
+  <div>
+    <ul class="flex justify-center items-center flex-wrap gap-5">
+      <li v-for="(simulation, index) in history" :key="index" class="my-4">
+        <SimulationHistoryItem :simulation="simulation">
+          <template #title>Simulation {{ index + 1 }}</template>
+        </SimulationHistoryItem>
       </li>
     </ul>
+  </div>
+  <div>
+    <Card v-if="lastSimulation">
+      <template #title>Last simulation</template>
+      <template #content>
+        <SimulationHistoryItem :simulation="lastSimulation" />
+      </template>
+    </Card>
   </div>
 </template>
 
 <script setup lang="ts">
 import { PatientsRegister } from 'hospital-lib'
 import { drugsSymbolMapper } from '../mapper'
+import { computed } from 'vue'
+import Card from 'primevue/card'
+import SimulationHistoryItem from './SimulationHistoryItem.vue'
 
 const props = defineProps<{
   simulationHistory: { output: PatientsRegister, input: { drugs: string[], patients: PatientsRegister } }[]
 }>()
+
+const history = computed(() => props.simulationHistory.slice(0, props.simulationHistory.length - 1))
+const lastSimulation = computed(() => props?.simulationHistory?.[props.simulationHistory.length - 1])
 </script>

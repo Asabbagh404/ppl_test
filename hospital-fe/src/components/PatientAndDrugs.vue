@@ -32,8 +32,7 @@
     <div>
       <h2 class="text-3xl text-center">Patients</h2>
       <ul class="flex flex-col justify-center items-center">
-        <li class="flex flex-shrink-0 flex-wrap items-center" v-for="[k] in Object.entries(patients)"
-          :key="k">
+        <li class="flex flex-shrink-0 flex-wrap items-center" v-for="[k] in Object.entries(patients)" :key="k">
           <PatientStateCard v-model:patient="patients[k]" :state="k" isEditable />
         </li>
       </ul>
@@ -53,11 +52,7 @@ const props = defineProps<{
   drugs: string[]
 }>()
 
-const emit = defineEmits(['updateDrugs', 'updatePatients'])
-
-const setPatientsValue = (value: { state: string, patient: number }) => {
-  emit('updatePatients', { ...props.patients, [value.state]: value.patient })
-}
+const emit = defineEmits(['update:drugs'])
 
 const unusedMarginTop = computed(() => {
   // 15px is the height of the text "Drag and drop"
@@ -79,9 +74,9 @@ const onDragStart = (drug: string, from: string) => {
 const onDrop = (to: string) => {
   if (draggedDrug.value && draggedFrom.value && draggedFrom.value !== to) {
     if (draggedFrom.value === 'unused' && to === 'drugs') {
-      emit('updateDrugs', [...props.drugs, draggedDrug.value])
+      emit('update:drugs', [...props.drugs, draggedDrug.value])
     } else if (draggedFrom.value === 'drugs' && to === 'unused') {
-      emit('updateDrugs', props.drugs.filter((drug) => drug !== draggedDrug.value))
+      emit('update:drugs', props.drugs.filter((drug) => drug !== draggedDrug.value))
     }
   }
   // Reset drag state

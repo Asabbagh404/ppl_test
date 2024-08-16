@@ -3,7 +3,9 @@
     {{ patientStateSymbolMapper[state as keyof typeof patientStateSymbolMapper] }}:
     <InputText v-if="isEditMode && isEditable" v-model="inputValue" @blur="saveEdit" @keyup.enter="saveEdit"
       class="w-[55px]" />
-    <span v-else>{{ inputValue }}</span>
+    <span v-else>{{ inputValue }} <template v-if="isEditable">
+        <i class="pi pi-pencil" @click="setEditMode"></i>
+      </template></span>
   </span>
 </template>
 
@@ -28,7 +30,6 @@ function saveEdit() {
   emit('update:patient', newPatientValue)
   isEditMode.value = false
 }
-
 const setEditMode = () => {
   if (isEditMode.value) {
     isEditMode.value = false
